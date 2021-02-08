@@ -3,8 +3,18 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo Build started on `date`
       - docker build --target test -t codebuild-test:latest .
+      - docker create --name codebuild-test codebuild-test:latest
+      - docker cp codebuild-test:/app/target/surefire-reports .
+      - docker rm codebuild-test
+
+      # - echo Build started on `date`
+      #- docker build --target test -t codebuild-test:latest .
   post_build:
     commands:
       - echo Build completed on `date`
+reports: #New
+  SurefireReports: # CodeBuild will create a report group called "SurefireReports".
+    files: #Store all of the files
+      - '**/*'
+    base-directory: 'surefire-reports' # Location of the reports

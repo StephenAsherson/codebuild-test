@@ -3,6 +3,8 @@ package com.swa.codebuildtest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import lombok.var;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
