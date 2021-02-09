@@ -1,20 +1,31 @@
 version: 0.2
 
 phases:
+  pre_build:
+    commands:
+      - - echo Build started on `date`
   build:
     commands:
-      - docker build --target test -t codebuild-test:latest .
-      - docker create --name codebuild-test codebuild-test:latest
-      - docker cp codebuild-test:/app/target/surefire-reports .
-      - docker rm codebuild-test
+      # --- TESTING ---
+      # Run the docker test target that produces the report files
+      - docker build --rm=false -t codebuild-app:latest .
 
-      # - echo Build started on `date`
-      #- docker build --target test -t codebuild-test:latest .
+      - id=`docker images --filter "label=test_stage=true"  -q`
+      - docker tag $id mychep-core-test:latest
+      - docker cp mychep-core-test:latest:portfolio-plus-core/target/failsafe-reports/TEST-*.xml test-reports/
+      # Create a container from the image (without starting)
+      # - docker create --name codebuild-app-test codebuild-app:latest
+      # Copy the relevant report files & clean-up
+      # - docker cp codebuild-app-test:/app/target/surefire-reports .
+      # - docker rm codebuild-app-test
+
+      # --- BUILDING ---
+      # continue with regular build
   post_build:
     commands:
       - echo Build completed on `date`
-reports: #New
-  SurefireReports: # CodeBuild will create a report group called "SurefireReports".
-    files: #Store all of the files
+reports:
+  SurefireReports:
+    files:
       - '**/*'
-    base-directory: 'surefire-reports' # Location of the reports
+    base-directory: 'test-reports'
