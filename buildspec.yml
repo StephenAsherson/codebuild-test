@@ -3,13 +3,12 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - - echo Build started on `date`
+      - echo Build started on `date`
   build:
     commands:
       # --- TESTING ---
       # Run the docker test target that produces the report files
       - docker build --rm=false -t codebuild-app:latest .
-
       - id=`docker images --filter "label=test_stage=true"  -q`
       - docker tag $id mychep-core-test:latest
       - docker cp mychep-core-test:latest:portfolio-plus-core/target/failsafe-reports/TEST-*.xml test-reports/
