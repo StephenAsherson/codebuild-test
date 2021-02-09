@@ -11,7 +11,8 @@ phases:
       - docker build --rm=false -t codebuild-app:latest .
       - id=`docker images --filter "label=test_stage=true"  -q`
       - docker tag $id mychep-core-test:latest
-      - docker cp mychep-core-test:latest:portfolio-plus-core/target/failsafe-reports test-reports
+      - docker cp mychep-core-test:latest:/app/target/failsafe-reports test-reports
+      - docker rm mychep-core-test:latest
       # Create a container from the image (without starting)
       # - docker create --name codebuild-app-test codebuild-app:latest
       # Copy the relevant report files & clean-up
