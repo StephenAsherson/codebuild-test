@@ -8,6 +8,7 @@ phases:
     commands:
       # --- TESTING ---
       # Run the docker test target that produces the report files
+      - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
       - docker build --rm=false -t codebuild-app:latest .
       - docker cp $(docker ps -a -f "label=test_stage=true" -f "status=exited" --format "{{.ID}}"):/app/target/surefire-reports test-reports
       # Create a container from the image (without starting)
